@@ -22,6 +22,16 @@ const STREAMER_RESPONSES = [
     "Locking my doors right now, do not touch the base!"
 ];
 
+const CHAT_WINDOW_SECONDS = 6 * 60 * 60;
+const CHAT_WINDOW_START = Date.now() - (CHAT_WINDOW_SECONDS * 1000);
+
+function formatTimestampFromIndex(index) {
+    const elapsedSeconds = Math.min(index, CHAT_WINDOW_SECONDS);
+    const timestampDate = new Date(CHAT_WINDOW_START + (elapsedSeconds * 1000));
+    const pad = (value) => String(value).padStart(2, '0');
+    return `${pad(timestampDate.getHours())}:${pad(timestampDate.getMinutes())}:${pad(timestampDate.getSeconds())}`;
+}
+
 function generateRandomMessage(index) {
     const isStreamer = Math.random() < 0.15;
     const isMod = !isStreamer && Math.random() < 0.1;
@@ -43,10 +53,7 @@ function generateRandomMessage(index) {
         if (Math.random() < 0.5) message = "Keep it PG or get timed out!";
     }
 
-    // Format timestamp
-    const sec = String(index % 60).padStart(2, '0');
-    const min = String(Math.floor(index / 60)).padStart(2, '0');
-    const timestamp = `00:${min}:${sec}`;
+    const timestamp = formatTimestampFromIndex(index);
 
     return { timestamp, user, badge, cls, msg: message };
 }
